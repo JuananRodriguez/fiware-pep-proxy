@@ -22,7 +22,8 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 const app = express();
 app.use(cors({
-  exposedHeaders: [config.allowHeaders]
+  // exposedHeaders: [config.allowHeaders]
+  exposedHeaders: ['fiware-total-count'] //TODO set as .env
 }));
 
 //app.use(express.bodyParser());
