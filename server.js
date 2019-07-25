@@ -5,6 +5,7 @@ const Root = require('./controllers/root').Root;
 const IDM = require('./lib/idm.js').IDM;
 const async = require('async');
 const errorhandler = require('errorhandler');
+const cors = require('cors');
 
 config.azf = config.azf || {};
 config.https = config.https || {};
@@ -20,6 +21,9 @@ process.on('uncaughtException', function(err) {
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 const app = express();
+app.use(cors({
+  exposedHeaders: [config.allowHeaders]
+}));
 
 //app.use(express.bodyParser());
 
@@ -45,10 +49,8 @@ app.use(function(req, res, next) {
     'Access-Control-Allow-Methods',
     'HEAD, POST, PUT, GET, OPTIONS, DELETE, PATCH'
   );
-  res.header(
-    'Access-Control-Allow-Headers',
-    `origin, content-type, X-Auth-Token, Tenant-ID, Authorization ${config.allowHeaders}`
-  );
+  res.header('Access-Control-Allow-Headers', '*');
+  log.debug('V: 0.0.3');
   //log.debug("New Request: ", req.method);
   if (req.method === 'OPTIONS') {
     log.debug('CORS request');
