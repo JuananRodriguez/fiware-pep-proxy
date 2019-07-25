@@ -8,6 +8,7 @@ const errorhandler = require('errorhandler');
 
 config.azf = config.azf || {};
 config.https = config.https || {};
+config.allowHeaders = config.allowHeaders || [];
 
 const log = require('./lib/logger').logger.getLogger('Server');
 
@@ -46,7 +47,7 @@ app.use(function(req, res, next) {
   );
   res.header(
     'Access-Control-Allow-Headers',
-    'origin, content-type, X-Auth-Token, Tenant-ID, Authorization'
+    `origin, content-type, X-Auth-Token, Tenant-ID, Authorization ${config.allowHeaders.join(',')}`
   );
   //log.debug("New Request: ", req.method);
   if (req.method === 'OPTIONS') {
