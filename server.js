@@ -6,12 +6,16 @@ const IDM = require('./lib/idm.js').IDM;
 const async = require('async');
 const errorhandler = require('errorhandler');
 const cors = require('cors');
+const log = require('./lib/logger').logger.getLogger('Server');
+
+log.debug('-V: 1.0.0');
 
 config.azf = config.azf || {};
 config.https = config.https || {};
-config.allowHeaders = config.allowHeaders || '';
 
-const log = require('./lib/logger').logger.getLogger('Server');
+if(process.env.PEP_PROXY_ALLOW_HEADERS && typeof process.env.PEP_PROXY_ALLOW_HEADERS === 'string' ) {
+  config.allowHeaders = process.env.PEP_PROXY_ALLOW_HEADERS.split(',')
+}
 
 const express = require('express');
 
@@ -22,8 +26,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 const app = express();
 app.use(cors({
-  // exposedHeaders: [config.allowHeaders]
-  exposedHeaders: ['fiware-total-count'] //TODO set as .env
+  exposedHeaders: config.allowHeaders
 }));
 
 //app.use(express.bodyParser());
@@ -51,7 +54,6 @@ app.use(function(req, res, next) {
     'HEAD, POST, PUT, GET, OPTIONS, DELETE, PATCH'
   );
   res.header('Access-Control-Allow-Headers', '*');
-  log.debug('V: 0.0.3');
   //log.debug("New Request: ", req.method);
   if (req.method === 'OPTIONS') {
     log.debug('CORS request');
